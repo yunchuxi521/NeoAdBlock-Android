@@ -1,5 +1,6 @@
 package com.adblock.app.stats
 
+import com.adblock.app.db.AppDatabase
 import kotlinx.coroutines.*
 import java.util.concurrent.atomic.AtomicLong
 

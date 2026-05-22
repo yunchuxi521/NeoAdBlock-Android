@@ -52,7 +52,6 @@ class AdSkipperService : AccessibilityService() {
 
                 scope.launch {
                     delay(800)
-                    if (!isEnabled) return@launch
                     withContext(Dispatchers.Main) {
                         processPackage(packageName)
                     }
@@ -64,7 +63,6 @@ class AdSkipperService : AccessibilityService() {
                 if (ruleCache.containsKey(packageName)) {
                     scope.launch {
                         delay(300)
-                        if (!isEnabled) return@launch
                         withContext(Dispatchers.Main) {
                             processPackage(packageName)
                         }

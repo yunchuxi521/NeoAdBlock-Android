@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.adblock.app.ui.theme.*
@@ -64,7 +65,7 @@ fun ShieldRing(
         if (isActive) {
             Canvas(modifier = Modifier.size(220.dp)) {
                 drawCircle(
-                    brush = RadialGradient(
+                    brush = Brush.radialGradient(
                         colors = listOf(
                             LaserGreen.copy(alpha = glowAlpha * 0.15f),
                             Color.Transparent,

@@ -3,3 +3,18 @@
 
 # Processed output (deployed to separate branch)
 /dist/
+
+# Android build artifacts
+app/build/
+/build/
+
+# Gradle cache
+.gradle/
+
+# Gradle wrapper binary (regenerate with gradle wrapper)
+gradle/wrapper/gradle-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+.DS_Store

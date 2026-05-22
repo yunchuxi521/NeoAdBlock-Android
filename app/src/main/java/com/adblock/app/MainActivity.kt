@@ -347,14 +347,12 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, AdBlockVpnService::class.java)
         intent.action = AdBlockVpnService.ACTION_START
         startForegroundService(intent)
-        isVpnActive = true
     }
 
     private fun stopVpn() {
         val intent = Intent(this, AdBlockVpnService::class.java)
         intent.action = AdBlockVpnService.ACTION_STOP
         startService(intent)
-        isVpnActive = false
     }
 
     @Deprecated("Deprecated in Java")

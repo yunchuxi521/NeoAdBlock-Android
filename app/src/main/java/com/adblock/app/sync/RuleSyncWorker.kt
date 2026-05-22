@@ -6,6 +6,7 @@ import androidx.work.*
 import com.adblock.app.accessibility.AccessibilityRuleEntity
 import com.adblock.app.accessibility.AccessibilityRuleParser
 import com.adblock.app.db.AppDatabase
+import com.adblock.app.db.RuleListMetaEntity
 import com.adblock.app.db.UserRuleEntity
 import com.adblock.app.rules.EasyListParser
 import kotlinx.coroutines.Dispatchers

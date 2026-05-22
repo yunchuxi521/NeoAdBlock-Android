@@ -44,8 +44,8 @@ class GestureExecutor(private val service: AccessibilityService) {
     }
 
     fun tapAtFraction(xFraction: Double, yFraction: Double): Boolean {
-        val display = service.windowManager?.defaultDisplay ?: return false
-        val metrics = DisplayMetrics().also { display.getRealMetrics(it) }
+        val wm = service.getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
+        val metrics = DisplayMetrics().also { wm.defaultDisplay.getRealMetrics(it) }
         val x = (metrics.widthPixels * xFraction).toInt()
         val y = (metrics.heightPixels * yFraction).toInt()
         return tapAt(x, y)

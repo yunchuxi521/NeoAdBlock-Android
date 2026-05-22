@@ -13,6 +13,7 @@ import com.adblock.app.stats.StatsTracker
 import kotlinx.coroutines.*
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 
 class AdBlockVpnService : VpnService() {
 
@@ -69,7 +70,7 @@ class AdBlockVpnService : VpnService() {
         statsTracker = StatsTracker(AppDatabase.getInstance(this))
 
         val builder = Builder()
-        builder.setName("AdBlock DNS Filter")
+        builder.setSession("AdBlock DNS Filter")
         builder.setMtu(1500)
 
         // VPN interface address
@@ -95,7 +96,9 @@ class AdBlockVpnService : VpnService() {
             // Load app bypass preferences
             try {
                 val db = AppDatabase.getInstance(this)
-                val bypassApps = db.appPreferenceDao().getBypassApps()
+                val bypassApps = runBlocking(Dispatchers.IO) {
+                    db.appPreferenceDao().getBypassApps()
+                }
                 for (app in bypassApps) {
                     builder.addDisallowedApplication(app.packageName)
                     android.util.Log.d("AdBlockVPN", "Bypassing VPN for: ${app.appName} (${app.packageName})")

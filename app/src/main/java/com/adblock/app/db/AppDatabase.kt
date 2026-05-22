@@ -50,15 +50,15 @@ abstract class AppDatabase : RoomDatabase() {
                     .also { INSTANCE = it }
             }
         }
-    }
 
-    private val MIGRATION_3_4 = Migration(3, 4) { db ->
-        db.execSQL("CREATE TABLE IF NOT EXISTS `accessibility_rules` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `packageName` TEXT NOT NULL, `ruleJson` TEXT NOT NULL, `enabled` INTEGER NOT NULL DEFAULT 1, `createdAt` INTEGER NOT NULL, `source` TEXT NOT NULL DEFAULT 'builtin')")
-        db.execSQL("ALTER TABLE `rule_list_meta` ADD COLUMN `type` TEXT NOT NULL DEFAULT 'easylist'")
-        db.execSQL("CREATE TABLE IF NOT EXISTS `hourly_stats` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hourTimestamp` INTEGER NOT NULL, `blockedCount` INTEGER NOT NULL DEFAULT 0, `queryCount` INTEGER NOT NULL DEFAULT 0, `dataSavedBytes` INTEGER NOT NULL DEFAULT 0)")
-    }
+        private val MIGRATION_3_4 = Migration(3, 4) { db ->
+            db.execSQL("CREATE TABLE IF NOT EXISTS `accessibility_rules` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `packageName` TEXT NOT NULL, `ruleJson` TEXT NOT NULL, `enabled` INTEGER NOT NULL DEFAULT 1, `createdAt` INTEGER NOT NULL, `source` TEXT NOT NULL DEFAULT 'builtin')")
+            db.execSQL("ALTER TABLE `rule_list_meta` ADD COLUMN `type` TEXT NOT NULL DEFAULT 'easylist'")
+            db.execSQL("CREATE TABLE IF NOT EXISTS `hourly_stats` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hourTimestamp` INTEGER NOT NULL, `blockedCount` INTEGER NOT NULL DEFAULT 0, `queryCount` INTEGER NOT NULL DEFAULT 0, `dataSavedBytes` INTEGER NOT NULL DEFAULT 0)")
+        }
 
-    private val MIGRATION_4_5 = Migration(4, 5) { db ->
-        db.execSQL("CREATE TABLE IF NOT EXISTS `ad_skip_logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `packageName` TEXT NOT NULL, `ruleSummary` TEXT NOT NULL DEFAULT '', `timestamp` INTEGER NOT NULL)")
+        private val MIGRATION_4_5 = Migration(4, 5) { db ->
+            db.execSQL("CREATE TABLE IF NOT EXISTS `ad_skip_logs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `packageName` TEXT NOT NULL, `ruleSummary` TEXT NOT NULL DEFAULT '', `timestamp` INTEGER NOT NULL)")
+        }
     }
 }

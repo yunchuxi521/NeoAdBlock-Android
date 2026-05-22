@@ -217,6 +217,7 @@ private fun TypeBadge(type: String) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddRuleListDialog(
     onDismiss: () -> Unit,
