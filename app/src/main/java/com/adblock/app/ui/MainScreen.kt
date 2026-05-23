@@ -29,7 +29,8 @@ fun MainScreen(
     ) {
         when (selectedTab) {
             "dashboard" -> DashboardScreen(
-                isActive = isActive
+                isActive = isActive,
+                onToggleVpn = onToggleVpn
             )
             "apps" -> appsScreen()
             "rules" -> rulesScreen()

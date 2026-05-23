@@ -19,7 +19,8 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun DashboardScreen(
-    isActive: Boolean = true
+    isActive: Boolean = true,
+    onToggleVpn: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getInstance(context) }
@@ -93,7 +94,7 @@ fun DashboardScreen(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                ShieldRing(isActive = isActive)
+                ShieldRing(isActive = isActive, onToggle = onToggleVpn)
             }
 
             Spacer(modifier = Modifier.height(32.dp))

@@ -1,7 +1,10 @@
 package com.adblock.app.vpn
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.net.VpnService
 import android.os.ParcelFileDescriptor
@@ -44,9 +47,23 @@ class AdBlockVpnService : VpnService() {
         "appsflyer.com", "adjust.com", "branch.io"
     )
 
+    override fun onCreate() {
+        super.onCreate()
+        val channel = NotificationChannel(
+            NOTIFICATION_CHANNEL_ID,
+            "VPN 服务",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.createNotificationChannel(channel)
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> startVpn()
+            ACTION_START -> {
+                startForeground(NOTIFICATION_ID, createNotification(this, "正在启动 VPN..."))
+                startVpn()
+            }
             ACTION_STOP -> stopVpn()
         }
         currentInstance = this
@@ -110,7 +127,7 @@ class AdBlockVpnService : VpnService() {
             vpnInterface = builder.establish()
             if (vpnInterface != null) {
                 startPacketLoop()
-                startForeground(NOTIFICATION_ID, createNotification("Ad blocking active"))
+                startForeground(NOTIFICATION_ID, createNotification(this, "Ad blocking active"))
             }
         } catch (e: Exception) {
             stopVpn()
@@ -307,11 +324,12 @@ class AdBlockVpnService : VpnService() {
 
         const val ACTION_START = "com.adblock.app.START_VPN"
         const val ACTION_STOP = "com.adblock.app.STOP_VPN"
+        private const val NOTIFICATION_CHANNEL_ID = "adblock_vpn"
         private const val NOTIFICATION_ID = 1001
 
-        private fun createNotification(text: String): Notification {
-            val channelId = "adblock_vpn"
-            return Notification.Builder(null, channelId)
+        private fun createNotification(ctx: Context, text: String): Notification {
+            val channelId = NOTIFICATION_CHANNEL_ID
+            return Notification.Builder(ctx, channelId)
                 .setContentTitle("AdBlock")
                 .setContentText(text)
                 .setSmallIcon(android.R.drawable.ic_lock_lock)

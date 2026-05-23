@@ -2,6 +2,7 @@ package com.adblock.app.ui
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Shield
@@ -23,6 +24,7 @@ import kotlin.math.sin
 @Composable
 fun ShieldRing(
     isActive: Boolean,
+    onToggle: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "shield")
@@ -58,7 +60,9 @@ fun ShieldRing(
     )
 
     Box(
-        modifier = modifier.size(220.dp),
+        modifier = modifier
+            .size(220.dp)
+            .clickable { onToggle() },
         contentAlignment = Alignment.Center
     ) {
         // Glow background

@@ -70,11 +70,7 @@ class AdBlockApplication : Application() {
                 ruleJson = """{"package":"com.taobao.taobao","priority":10,"match":[{"type":"id","value":"skip"},{"type":"text_contains","value":"跳过"}],"fallback":{"x":0.95,"y":0.05},"actions":["click"]}""",
                 source = "builtin"
             ),
-            AccessibilityRuleEntity(
-                packageName = "*",
-                ruleJson = """{"package":"*","priority":1,"match":[{"type":"class","value":"android.widget.Button","extra":{"text_regex":".*[跳过关闭广告skip].*"}},{"type":"desc_regex","value":".*[关闭].*"}],"fallback":{"x":0.9,"y":0.1},"actions":["click"]}""",
-                source = "builtin"
-            )
+            // 注：不设通配规则，避免误触。用户可通过录制生成针对特定应用的规则
         )
         for (rule in defaultRules) {
             database.accessibilityRuleDao().insert(rule)

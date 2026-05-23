@@ -1,13 +1,18 @@
 package com.adblock.app
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.VpnService
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.adblock.app.accessibility.AccessibilityRuleEntity
@@ -26,7 +31,7 @@ import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
 
-    private val isVpnActive: Boolean get() = AdBlockVpnService.currentInstance != null
+    private var isVpnActive by mutableStateOf(AdBlockVpnService.currentInstance != null)
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -334,13 +339,43 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private val vpnLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            doStartVpn()
+            isVpnActive = true
+        } else {
+            Toast.makeText(this, "VPN 权限被拒绝", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private val notificationPermLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            proceedStartVpn()
+        } else {
+            Toast.makeText(this, "需要通知权限来保持 VPN 服务运行", Toast.LENGTH_LONG).show()
+        }
+    }
+
     private fun startVpn() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                notificationPermLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                return
+            }
+        }
+        proceedStartVpn()
+    }
+
+    private fun proceedStartVpn() {
         val intent = VpnService.prepare(this)
         if (intent != null) {
-            startActivityForResult(intent, REQUEST_VPN)
+            vpnLauncher.launch(intent)
             return
         }
         doStartVpn()
+        isVpnActive = true
     }
 
     private fun doStartVpn() {
@@ -353,18 +388,6 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, AdBlockVpnService::class.java)
         intent.action = AdBlockVpnService.ACTION_STOP
         startService(intent)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_VPN) {
-            if (resultCode == RESULT_OK) doStartVpn()
-            else Toast.makeText(this, "VPN 权限被拒绝", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    companion object {
-        private const val REQUEST_VPN = 100
+        isVpnActive = false
     }
 }

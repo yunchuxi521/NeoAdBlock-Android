@@ -2,6 +2,9 @@ package com.adblock.app.ui
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.AdaptiveIconDrawable
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -150,11 +153,29 @@ private fun AppRow(app: AppInfo, onToggle: (Boolean) -> Unit) {
 }
 
 private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): Bitmap? {
-    val width = drawable.intrinsicWidth.coerceAtLeast(1)
-    val height = drawable.intrinsicHeight.coerceAtLeast(1)
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bitmap
+    return try {
+        if (drawable is BitmapDrawable) {
+            drawable.bitmap
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && drawable is AdaptiveIconDrawable) {
+            val bg = drawable.background?.constantState?.newDrawable()
+            val fg = drawable.foreground?.constantState?.newDrawable()
+            val bitmap = Bitmap.createBitmap(128, 128, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            bg?.setBounds(0, 0, 128, 128)
+            bg?.draw(canvas)
+            fg?.setBounds(0, 0, 128, 128)
+            fg?.draw(canvas)
+            bitmap
+        } else {
+            val w = drawable.intrinsicWidth.coerceIn(1, 256)
+            val h = drawable.intrinsicHeight.coerceIn(1, 256)
+            val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+            bitmap
+        }
+    } catch (e: Exception) {
+        null
+    }
 }
