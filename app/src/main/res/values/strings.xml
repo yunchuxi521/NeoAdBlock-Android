@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AdBlock</string>
+    <string name="accessibility_description">自动检测并跳过开屏广告和应用内广告</string>
+</resources>
