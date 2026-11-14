@@ -1,0 +1,28 @@
+name: Rule Pipeline
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Process upstream rules
+        run: bash scripts/process-rules.sh
+
+      - name: Deploy to rules branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout --orphan rules-temp
+          cp -r dist/rules/* .
+          git add -A
+          git commit -m "Update rules $(date -u +%Y-%m-%d)"
+          git push origin rules-temp:rules --force
